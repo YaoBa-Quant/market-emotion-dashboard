@@ -8,7 +8,8 @@
 
 > **定位**：盘后（EOD）择时工具，不是盘中实时信号。所有指标基于收盘后已同步的定稿数据计算。
 
----
+<img width="300" height="300" alt="image" src="https://github.com/user-attachments/assets/e9acadec-639b-435c-aa24-b1825e59bacf" />
+欢迎扫码进群交流，获取最新策略动态、量化研究思路和产品更新通知,微信号: Code_Mvp。
 
 ## 目录
 
