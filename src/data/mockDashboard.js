@@ -1,0 +1,190 @@
+export const marketFormulaSnippet = `function check_market_condition(context) {
+  const scores = [
+    ['hs300_trend', trendScore, 0.20],
+    ['volume', volScore, 0.15],
+    ['volume_trend', volTrendScore, 0.05],
+    ['market_breadth', breadthScore, 0.15],
+    ['advance_decline', adScore, 0.15],
+    ['limit_up_down', ldScore, 0.15],
+    ['max_height', heightScore, 0.10],
+    ['panic_factor', panicScore, 0.05],
+  ]
+
+  const emotionScore = sum(scores.map(([_, score, weight]) => score * weight)) /
+    sum(scores.map(([_, __, weight]) => weight))
+
+  const allowOpen = !(
+    emotionScore < 54 ||
+    volumeRatio < 0.55 ||
+    hs300Drop > 3.0
+  )
+
+  return { emotionScore, allowOpen }
+}`
+
+export const mockMarketDashboard = {
+  marketSummary: {
+    title: '大盘情绪看板',
+    strategyName: 'ETF轮动策略 / 大盘择时',
+    effectiveDate: '2026-06-15',
+    updateTime: '14:47:32',
+    emotionScore: 35.9,
+    regime: 'weak',
+    regimeLabel: 'Risk-Off (防守)',
+    allowOpen: false,
+    positiveShare: 28.4,
+    triggerCount: 3,
+    hs300Close: 3812.48,
+    hs300Ma5: 3868.22,
+    hs300Ma20: 3921.55,
+    hs300Drop: 1.84,
+    volumeRatio: 0.52,
+    volumeTrend: 0.78,
+    minEmotionScore: 54,
+    minVolumeRatio: 0.55,
+    banReasons: [
+      '情绪得分 35.9 < 54',
+      '量能比 0.52 < 0.55',
+      '沪深300 与中证1000均位于 MA20 下方',
+    ],
+    gateStatus: [
+      {
+        key: 'emotion',
+        label: '情绪阈值',
+        status: 'danger',
+        current: '35.9',
+        threshold: '>= 54',
+        description: '综合加权得分不足，市场仍偏退潮。',
+      },
+      {
+        key: 'volume',
+        label: '量能阈值',
+        status: 'danger',
+        current: '0.52',
+        threshold: '>= 0.55',
+        description: '今日成交额不足 60 日均量，承接偏弱。',
+      },
+      {
+        key: 'hs300',
+        label: 'HS300 跌幅',
+        status: 'warning',
+        current: '1.84%',
+        threshold: '<= 3.00%',
+        description: '尚未达到股灾级别，但趋势项持续拖累评分。',
+      },
+    ],
+  },
+  factorScores: [
+    {
+      id: 'hs300_trend',
+      name: '沪深300趋势',
+      alias: 'hs300_trend',
+      rawValue: '3812.48 / MA5 3868.22 / MA20 3921.55',
+      score: 12,
+      weight: 0.2,
+      contribution: 2.4,
+      status: 'danger',
+      description: '指数跌破 MA5 且 MA5 低于 MA20，多头结构未恢复。',
+    },
+    {
+      id: 'volume',
+      name: '量能健康度',
+      alias: 'volume',
+      rawValue: '量能比 0.52',
+      score: 2,
+      weight: 0.15,
+      contribution: 0.3,
+      status: 'danger',
+      description: '量能映射接近零轴，无法支撑情绪扩散。',
+    },
+    {
+      id: 'volume_trend',
+      name: '量能趋势',
+      alias: 'volume_trend',
+      rawValue: '20/60 日量能趋势 0.78',
+      score: 22.5,
+      weight: 0.05,
+      contribution: 1.13,
+      status: 'warning',
+      description: '短期量能较长期均值偏弱，但没有完全失真。',
+    },
+    {
+      id: 'market_breadth',
+      name: '市场宽度',
+      alias: 'market_breadth',
+      rawValue: '上涨占比 33.8%',
+      score: 31.2,
+      weight: 0.15,
+      contribution: 4.68,
+      status: 'warning',
+      description: '上涨家数占比低于健康区间，赚钱效应收缩。',
+    },
+    {
+      id: 'advance_decline',
+      name: '涨跌比',
+      alias: 'advance_decline',
+      rawValue: '1.18 : 1',
+      score: 56.8,
+      weight: 0.15,
+      contribution: 8.52,
+      status: 'neutral',
+      description: '涨跌数量比略偏中性，不能单独证明市场转强。',
+    },
+    {
+      id: 'limit_up_down',
+      name: '涨跌停比',
+      alias: 'limit_up_down',
+      rawValue: '31 / 12 = 2.58',
+      score: 73.7,
+      weight: 0.15,
+      contribution: 11.06,
+      status: 'good',
+      description: '连板情绪尚有韧性，是当前少数偏强项。',
+    },
+    {
+      id: 'max_height',
+      name: '连板高度',
+      alias: 'max_height',
+      rawValue: '最高连板 3',
+      score: 65,
+      weight: 0.1,
+      contribution: 6.5,
+      status: 'good',
+      description: '高度板维持 3 板，情绪并未完全冰封。',
+    },
+    {
+      id: 'panic_factor',
+      name: '恐慌因子',
+      alias: 'panic_factor',
+      rawValue: '炸板 26 + 跌停 12 * 2 = 50',
+      score: 60,
+      weight: 0.05,
+      contribution: 3,
+      status: 'warning',
+      description: '恐慌值处于中性偏弱区，说明抛压仍在释放。',
+    },
+  ],
+  marketChart: {
+    dates: ['05-19', '05-22', '05-23', '05-26', '05-27', '05-28', '05-29', '05-30', '06-03', '06-04', '06-05', '06-06', '06-09', '06-10', '06-11', '06-12', '06-13', '06-14', '06-15'],
+    close: [3972, 3988, 4015, 3996, 3978, 3962, 3940, 3926, 3908, 3896, 3882, 3874, 3860, 3851, 3842, 3834, 3826, 3819, 3812],
+    ma5: [null, null, null, null, 3990, 3988, 3978, 3960, 3942, 3926, 3910, 3897, 3884, 3873, 3861, 3852, 3843, 3834, 3826],
+    ma20: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 3927, 3922],
+  },
+  watchlist: [
+    { rank: 1, star: true, momentum: 0.288, code: '515050.SH', name: '通信ETF华夏', price: 3.134, changePct: 2.74, ma20Pass: true, tag: '强势方向' },
+    { rank: 2, star: true, momentum: 0.264, code: '588200.SH', name: '科创芯片ETF嘉实', price: 3.255, changePct: 3.18, ma20Pass: true, tag: '情绪韧性' },
+    { rank: 3, star: false, momentum: 0.197, code: '513310.SH', name: '中韩半导体ETF', price: 5.057, changePct: 1.26, ma20Pass: true, tag: '趋势延续' },
+    { rank: 4, star: false, momentum: 0.166, code: '159995.SZ', name: '芯片ETF华夏', price: 2.191, changePct: 0.88, ma20Pass: false, tag: '观察中' },
+    { rank: 5, star: false, momentum: 0.152, code: '512480.SH', name: '半导体ETF国联安', price: 1.91, changePct: 0.67, ma20Pass: false, tag: '等待确认' },
+    { rank: 6, star: false, momentum: 0.141, code: '159516.SZ', name: '半导体设备ETF', price: 1.044, changePct: 0.43, ma20Pass: true, tag: '量价同步' },
+  ],
+  signalPanel: {
+    headline: '风控阻断',
+    summary: '情绪分 35.9 / 量能比 0.52，沪深300与中证1000共振走弱，今日不开新仓。',
+    notes: [
+      '当前环境属于弱势市场，策略 `get_market_regime()` 返回 weak。',
+      '若后续情绪分重新站上 54 且量能比回到 0.55 以上，可恢复开仓。',
+      '上涨占比、涨跌停比和连板高度仍有修复信号，可继续观察候选池。',
+    ],
+  },
+}

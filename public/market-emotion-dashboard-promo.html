@@ -1,0 +1,696 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>大盘情绪看板竖版介绍</title>
+    <style>
+      :root {
+        --bg: #f5f2ec;
+        --paper: rgba(255, 255, 255, 0.72);
+        --navy: #526b90;
+        --navy-deep: #3f587d;
+        --sand: #d8b783;
+        --sand-soft: #ebd6b0;
+        --mist: #dfe4ec;
+        --text: #425069;
+        --text-soft: #7b8596;
+        --line: rgba(82, 107, 144, 0.12);
+        --shadow: 0 24px 60px rgba(52, 67, 97, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+        color: var(--text);
+        background:
+          linear-gradient(140deg, rgba(82, 107, 144, 0.05), transparent 24%),
+          linear-gradient(320deg, rgba(216, 183, 131, 0.08), transparent 26%),
+          var(--bg);
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image:
+          linear-gradient(45deg, transparent 48.8%, rgba(80, 96, 123, 0.08) 49%, rgba(80, 96, 123, 0.08) 51%, transparent 51.2%),
+          linear-gradient(-45deg, transparent 48.8%, rgba(80, 96, 123, 0.08) 49%, rgba(80, 96, 123, 0.08) 51%, transparent 51.2%);
+        background-size: 240px 240px;
+        pointer-events: none;
+        opacity: 0.6;
+      }
+
+      .deck {
+        position: relative;
+        z-index: 1;
+        width: min(100%, 500px);
+        margin: 0 auto;
+        padding: 24px 14px 48px;
+      }
+
+      .slide {
+        position: relative;
+        width: 100%;
+        min-height: 760px;
+        margin-bottom: 18px;
+        padding: 28px 24px 24px;
+        border-radius: 34px;
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.76), rgba(249, 247, 243, 0.92));
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .slide::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(circle at 86% 12%, rgba(82, 107, 144, 0.16), transparent 18%),
+          radial-gradient(circle at 80% 86%, rgba(216, 183, 131, 0.22), transparent 16%);
+        pointer-events: none;
+      }
+
+      .eyebrow {
+        position: relative;
+        z-index: 1;
+        display: inline-flex;
+        padding: 6px 14px;
+        border-radius: 999px;
+        background: rgba(82, 107, 144, 0.08);
+        color: var(--navy);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .hero-title {
+        position: relative;
+        z-index: 1;
+        margin: 18px 0 0;
+        font-size: 46px;
+        line-height: 0.96;
+        letter-spacing: -0.05em;
+        color: var(--navy-deep);
+      }
+
+      .hero-title em,
+      .section-title em {
+        font-style: italic;
+      }
+
+      .section-title {
+        position: relative;
+        z-index: 1;
+        margin: 18px 0 0;
+        font-size: 34px;
+        line-height: 1.02;
+        letter-spacing: -0.04em;
+        color: var(--navy-deep);
+      }
+
+      .subtitle {
+        position: relative;
+        z-index: 1;
+        margin: 18px 0 0;
+        color: var(--text-soft);
+        font-size: 17px;
+        line-height: 1.75;
+      }
+
+      .accent-strip {
+        position: relative;
+        z-index: 1;
+        display: inline-block;
+        margin-top: 12px;
+        padding: 4px 12px 6px;
+        background: linear-gradient(90deg, var(--sand), rgba(216, 183, 131, 0.2));
+        color: #fff;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .pill-cloud {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 28px;
+      }
+
+      .pill {
+        padding: 11px 18px;
+        border-radius: 999px;
+        font-size: 17px;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+
+      .pill.navy {
+        color: #fff;
+        background: var(--navy);
+      }
+
+      .pill.sand {
+        color: #fff;
+        background: var(--sand);
+      }
+
+      .pill.mist {
+        color: var(--navy);
+        background: var(--mist);
+      }
+
+      .stat-grid,
+      .feature-grid,
+      .score-grid {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        gap: 12px;
+        margin-top: 22px;
+      }
+
+      .stat-grid,
+      .feature-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .score-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .card {
+        position: relative;
+        z-index: 1;
+        padding: 16px 16px 18px;
+        border-radius: 24px;
+        background: var(--paper);
+        border: 1px solid rgba(82, 107, 144, 0.08);
+      }
+
+      .card .num {
+        font-size: 34px;
+        font-weight: 800;
+        line-height: 1;
+        color: var(--sand);
+      }
+
+      .card h3 {
+        margin: 8px 0 8px;
+        font-size: 18px;
+        color: var(--navy-deep);
+      }
+
+      .card p,
+      .score-card p {
+        margin: 0;
+        color: var(--text-soft);
+        font-size: 14px;
+        line-height: 1.7;
+      }
+
+      .feature-grid .card:nth-child(2n) .num,
+      .diamond.navy,
+      .score-card strong {
+        color: var(--navy);
+      }
+
+      .timeline {
+        position: relative;
+        z-index: 1;
+        margin-top: 28px;
+        display: grid;
+        gap: 12px;
+      }
+
+      .timeline-item {
+        display: grid;
+        grid-template-columns: 72px 1fr;
+        gap: 12px;
+        align-items: start;
+      }
+
+      .timeline-step {
+        height: 72px;
+        border-radius: 22px;
+        display: grid;
+        place-items: center;
+        color: #fff;
+        font-size: 24px;
+        font-weight: 800;
+      }
+
+      .timeline-item:nth-child(odd) .timeline-step {
+        background: var(--sand);
+      }
+
+      .timeline-item:nth-child(even) .timeline-step {
+        background: var(--navy);
+      }
+
+      .timeline-content {
+        padding: 12px 14px;
+        border-radius: 22px;
+        background: var(--paper);
+      }
+
+      .timeline-content strong {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 16px;
+        color: var(--navy-deep);
+      }
+
+      .factor-grid {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        gap: 12px;
+        margin-top: 22px;
+      }
+
+      .factor-card {
+        display: grid;
+        grid-template-columns: 58px 1fr;
+        gap: 12px;
+        padding: 14px;
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.72);
+        border: 1px solid rgba(82, 107, 144, 0.1);
+      }
+
+      .diamond {
+        width: 52px;
+        height: 52px;
+        margin-top: 4px;
+        transform: rotate(45deg);
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        color: #fff;
+        font-size: 20px;
+        font-weight: 800;
+      }
+
+      .diamond span {
+        transform: rotate(-45deg);
+      }
+
+      .diamond.sand {
+        background: linear-gradient(180deg, #dfc28f, #cfab6a);
+      }
+
+      .diamond.navy {
+        background: linear-gradient(180deg, #7d95ba, #526b90);
+        color: #fff;
+      }
+
+      .factor-card h3 {
+        margin: 0;
+        font-size: 18px;
+        color: var(--navy-deep);
+      }
+
+      .factor-card small {
+        display: block;
+        margin-top: 4px;
+        color: var(--sand);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .factor-card p {
+        margin: 10px 0 0;
+        color: var(--text-soft);
+        font-size: 14px;
+        line-height: 1.72;
+      }
+
+      .score-card {
+        position: relative;
+        z-index: 1;
+        padding: 16px 18px;
+        border-radius: 24px;
+        background: var(--paper);
+        border: 1px solid rgba(82, 107, 144, 0.08);
+      }
+
+      .score-card strong {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 20px;
+      }
+
+      .footer-note {
+        position: absolute;
+        left: 24px;
+        right: 24px;
+        bottom: 22px;
+        z-index: 1;
+        color: rgba(66, 80, 105, 0.58);
+        font-size: 12px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .cta-box {
+        position: relative;
+        z-index: 1;
+        margin-top: 28px;
+        padding: 20px;
+        border-radius: 28px;
+        background: linear-gradient(135deg, rgba(82, 107, 144, 0.94), rgba(65, 88, 125, 0.96));
+        color: #f6f8fb;
+      }
+
+      .cta-box h3 {
+        margin: 0 0 10px;
+        font-size: 28px;
+        letter-spacing: -0.03em;
+      }
+
+      .cta-box p {
+        margin: 0;
+        font-size: 15px;
+        line-height: 1.8;
+        color: rgba(246, 248, 251, 0.82);
+      }
+
+      .cover-lines {
+        position: relative;
+        z-index: 1;
+        margin-top: 26px;
+        display: grid;
+        gap: 12px;
+      }
+
+      .cover-line {
+        width: fit-content;
+        max-width: 100%;
+        padding: 12px 20px;
+        border-radius: 999px;
+        font-size: 28px;
+        line-height: 1.1;
+        font-weight: 800;
+        color: #fff;
+      }
+
+      .cover-line.sand {
+        background: var(--sand);
+      }
+
+      .cover-line.navy {
+        background: var(--navy);
+      }
+
+      .cover-line.mist {
+        background: var(--mist);
+        color: var(--navy);
+      }
+
+      @media (max-width: 520px) {
+        .deck {
+          width: 100%;
+          padding-inline: 10px;
+        }
+
+        .slide {
+          min-height: auto;
+          padding: 22px 18px 76px;
+        }
+
+        .hero-title {
+          font-size: 40px;
+        }
+
+        .section-title {
+          font-size: 30px;
+        }
+
+        .cover-line {
+          font-size: 24px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="deck">
+      <section class="slide">
+        <span class="eyebrow">Market Mood / Story Deck</span>
+        <h1 class="hero-title"><em>EMOTION</em><br />大盘情绪看板</h1>
+        <div class="accent-strip">盘后定稿｜历史模式｜日历总览</div>
+        <p class="subtitle">
+          一套专门为 A 股交易节奏设计的情绪看板，用收盘后定稿数据还原市场温度，
+          把“能不能开仓、该上多少仓、风险在哪”讲清楚。
+        </p>
+
+        <div class="cover-lines">
+          <div class="cover-line sand">先看情绪</div>
+          <div class="cover-line navy">再定仓位</div>
+          <div class="cover-line mist">最后做交易</div>
+        </div>
+
+        <div class="pill-cloud">
+          <span class="pill sand">情绪总分</span>
+          <span class="pill navy">建议仓位</span>
+          <span class="pill mist">是否可开仓</span>
+          <span class="pill sand">月历补抓</span>
+          <span class="pill navy">HS300趋势</span>
+        </div>
+        <div class="footer-note">01 / Intro</div>
+      </section>
+
+      <section class="slide">
+        <span class="eyebrow">What It Solves</span>
+        <h2 class="section-title"><em>WHY</em> 它不是看盘小工具，而是交易节奏面板</h2>
+        <div class="stat-grid">
+          <article class="card">
+            <div class="num">01</div>
+            <h3>把盘后结果讲人话</h3>
+            <p>从“涨了跌了”变成“市场现在偏进攻还是偏防守、是否值得出手”。</p>
+          </article>
+          <article class="card">
+            <div class="num">02</div>
+            <h3>把主观判断压成规则</h3>
+            <p>用 8 个核心因子拆市场，不靠拍脑袋，靠结构化评分做决策。</p>
+          </article>
+          <article class="card">
+            <div class="num">03</div>
+            <h3>把仓位建议落到动作</h3>
+            <p>不是只说“市场不错”，而是直接给出空仓、轻仓、标准仓、重仓。</p>
+          </article>
+          <article class="card">
+            <div class="num">04</div>
+            <h3>把复盘做成时间轴</h3>
+            <p>日历页回看每个交易日的情绪分、仓位和可开仓状态，一眼看趋势。</p>
+          </article>
+        </div>
+        <div class="footer-note">02 / Value</div>
+      </section>
+
+      <section class="slide">
+        <span class="eyebrow">Workflow</span>
+        <h2 class="section-title"><em>HOW</em> 从数据到动作，一共 4 步</h2>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-step">01</div>
+            <div class="timeline-content">
+              <strong>盘后抓取全市场收盘数据</strong>
+              以交易日定稿口径为基础，只保留历史模式，避免盘中实时口径混乱。
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-step">02</div>
+            <div class="timeline-content">
+              <strong>8 个因子分别打分</strong>
+              趋势、量能、宽度、涨跌停生态、连板高度、恐慌程度，合成情绪总分。
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-step">03</div>
+            <div class="timeline-content">
+              <strong>生成门控结论和建议仓位</strong>
+              同时检查情绪阈值、量能阈值和 HS300 风险阈值，决定能否开仓。
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-step">04</div>
+            <div class="timeline-content">
+              <strong>详情页 + 日历页双视角复盘</strong>
+              详情页看当天结构，日历页看月度全貌，缺失交易日支持一键补抓。
+            </div>
+          </div>
+        </div>
+        <div class="footer-note">03 / Workflow</div>
+      </section>
+
+      <section class="slide">
+        <span class="eyebrow">Factor System 01</span>
+        <h2 class="section-title"><em>FACTOR</em> 因子构成（上）</h2>
+        <div class="factor-grid">
+          <article class="factor-card">
+            <div class="diamond sand"><span>01</span></div>
+            <div>
+              <h3>沪深300趋势</h3>
+              <small>HS300 Trend</small>
+              <p>比较 HS300 当前点位与 MA5、MA20 的相对位置。指数站上短中期均线，代表主趋势更顺，风险偏好更容易抬升。</p>
+            </div>
+          </article>
+          <article class="factor-card">
+            <div class="diamond navy"><span>02</span></div>
+            <div>
+              <h3>量能健康度</h3>
+              <small>Volume Ratio</small>
+              <p>把当日成交额与 60 日均额对比。量能明显放大，说明增量资金愿意交易；量能过低，哪怕指数不弱，出手也容易没承接。</p>
+            </div>
+          </article>
+          <article class="factor-card">
+            <div class="diamond sand"><span>03</span></div>
+            <div>
+              <h3>量能趋势</h3>
+              <small>20/60 Volume Trend</small>
+              <p>看近 20 日均额和近 60 日均额的比值，判断资金活跃度是在升温还是降温。它更像市场“背景噪音”的方向指示器。</p>
+            </div>
+          </article>
+          <article class="factor-card">
+            <div class="diamond navy"><span>04</span></div>
+            <div>
+              <h3>市场宽度</h3>
+              <small>Market Breadth</small>
+              <p>统计上涨、下跌、平盘家数，并观察上涨占比。宽度高，说明赚钱效应不是局部，而是更广泛地扩散到全市场。</p>
+            </div>
+          </article>
+        </div>
+        <div class="footer-note">04 / Factors A</div>
+      </section>
+
+      <section class="slide">
+        <span class="eyebrow">Factor System 02</span>
+        <h2 class="section-title"><em>FACTOR</em> 因子构成（下）</h2>
+        <div class="factor-grid">
+          <article class="factor-card">
+            <div class="diamond sand"><span>05</span></div>
+            <div>
+              <h3>涨跌比</h3>
+              <small>Advance / Decline</small>
+              <p>上涨家数与下跌家数的比值，直接衡量当日赚钱效应扩散速度。它比单看指数更能反映中小票是否真的在赚钱。</p>
+            </div>
+          </article>
+          <article class="factor-card">
+            <div class="diamond navy"><span>06</span></div>
+            <div>
+              <h3>涨跌停比</h3>
+              <small>Limit Up / Down</small>
+              <p>比较涨停家数与跌停家数。高位情绪强不强、是否有进攻性，往往不是看热点词，而是看涨停生态有没有扩张。</p>
+            </div>
+          </article>
+          <article class="factor-card">
+            <div class="diamond sand"><span>07</span></div>
+            <div>
+              <h3>连板高度</h3>
+              <small>Max Height</small>
+              <p>统计近几个交易日的连续涨停高度。高度越高，说明市场愿意给龙头更高溢价，短线博弈环境通常更友好。</p>
+            </div>
+          </article>
+          <article class="factor-card">
+            <div class="diamond navy"><span>08</span></div>
+            <div>
+              <h3>恐慌因子</h3>
+              <small>Panic Factor</small>
+              <p>把炸板和跌停放进同一个风险刻度。炸板多、跌停多，意味着高位承接差、情绪脆弱，系统会明显降低分数。</p>
+            </div>
+          </article>
+        </div>
+        <div class="footer-note">05 / Factors B</div>
+      </section>
+
+      <section class="slide">
+        <span class="eyebrow">Decision Logic</span>
+        <h2 class="section-title"><em>SIGNAL</em> 情绪不是结论，仓位才是动作</h2>
+        <div class="score-grid">
+          <article class="score-card">
+            <strong>门控 1：情绪阈值</strong>
+            <p>情绪总分低于 54，直接偏防守。市场结构不够健康，就算有局部热点也不值得激进上仓位。</p>
+          </article>
+          <article class="score-card">
+            <strong>门控 2：量能阈值</strong>
+            <p>量能比低于 0.55，说明承接不足。系统宁可错过，也不鼓励在无量环境里硬做多。</p>
+          </article>
+          <article class="score-card">
+            <strong>门控 3：HS300 风险阈值</strong>
+            <p>若 HS300 当日大跌，系统即使看见局部强势，也会优先控制大盘系统性风险。</p>
+          </article>
+          <article class="score-card">
+            <strong>动作输出：仓位梯度</strong>
+            <p>空仓观望 → 轻仓试探 → 标准仓 → 重仓 → 满仓进攻。把“看法”压缩成“明天怎么做”。</p>
+          </article>
+        </div>
+        <div class="footer-note">06 / Decision</div>
+      </section>
+
+      <section class="slide">
+        <span class="eyebrow">Use Cases</span>
+        <h2 class="section-title"><em>SCENARIO</em> 这套看板适合谁用</h2>
+        <div class="feature-grid">
+          <article class="card">
+            <div class="num">A</div>
+            <h3>每天 5 分钟盘后复盘</h3>
+            <p>不用从几千只股票里翻情绪，全市场状态、核心风险、建议仓位一次看完。</p>
+          </article>
+          <article class="card">
+            <div class="num">B</div>
+            <h3>做交易日志和策略回看</h3>
+            <p>日历页像一本量化交易手帐，能回头检视“那天为什么该出手/不该出手”。</p>
+          </article>
+          <article class="card">
+            <div class="num">C</div>
+            <h3>给主观交易一个纪律面板</h3>
+            <p>把主观情绪从交易里拿掉，让盘后结论替你做第一道过滤。</p>
+          </article>
+          <article class="card">
+            <div class="num">D</div>
+            <h3>做内容展示也很友好</h3>
+            <p>详情页适合讲结构，日历页适合讲趋势，非常适合做图文、社媒和复盘分享。</p>
+          </article>
+        </div>
+        <div class="cta-box">
+          <h3>一句话卖点</h3>
+          <p>不是预测市场涨跌，而是在收盘后用一套统一口径，回答交易者最关心的三个问题：现在温度几分？能不能出手？该上多少仓？</p>
+        </div>
+        <div class="footer-note">07 / Use Case</div>
+      </section>
+
+      <section class="slide">
+        <span class="eyebrow">Xiaohongshu Ready</span>
+        <h2 class="section-title"><em>POST</em> 适合发小红书的封面句</h2>
+        <div class="cover-lines">
+          <div class="cover-line navy">复盘不用猜情绪</div>
+          <div class="cover-line sand">这套看板直接给仓位</div>
+          <div class="cover-line mist">盘后 5 分钟看懂市场</div>
+        </div>
+        <p class="subtitle">
+          用统一的收盘口径，把交易状态量化成一套“能复用、能复盘、能解释”的仪表盘。
+          适合量化爱好者、主观交易者、内容创作者做盘后复盘展示。
+        </p>
+        <div class="pill-cloud">
+          <span class="pill navy">功能介绍</span>
+          <span class="pill sand">因子拆解</span>
+          <span class="pill mist">日历总览</span>
+          <span class="pill navy">仓位决策</span>
+        </div>
+        <div class="footer-note">08 / Share</div>
+      </section>
+    </main>
+  </body>
+</html>

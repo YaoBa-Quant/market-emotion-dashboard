@@ -1,0 +1,43 @@
+# 依赖与构建产物
+node_modules
+dist
+dist-ssr
+
+# 环境变量与密钥
+# 注意：必须用 .env.* 而非仅 .env.local，
+# 否则 .env.local.bak / .env.local.old 这类备份文件会漏网被提交
+.env
+.env.*
+!.env.example
+
+# 运行期数据（SQLite 快照库，由服务端首次启动时自动创建）
+# 注意：必须写成 /data/（根锚定），否则会连带忽略 src/data/ 等子目录
+/data/
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+
+# 日志
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# 临时文件
+*.local
+.tmp-*
+
+# 编辑器与系统文件
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

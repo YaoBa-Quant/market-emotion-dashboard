@@ -1,0 +1,47 @@
+{
+  "name": "market-emotion-dashboard",
+  "private": true,
+  "version": "1.0.0",
+  "description": "A股大盘情绪看板：基于 Tushare 盘后数据，将全市场情绪量化为单一评分，并输出开仓门控与建议仓位",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
+  "keywords": [
+    "a-share",
+    "quant",
+    "market-sentiment",
+    "dashboard",
+    "vue3",
+    "echarts",
+    "tushare"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm:dev:server\" \"npm:dev:client\"",
+    "dev:client": "vite",
+    "dev:server": "node server/index.js",
+    "start:server": "node server/index.js",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "axios": "^1.18.0",
+    "better-sqlite3": "^12.11.1",
+    "concurrently": "^10.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "echarts": "^6.1.0",
+    "element-plus": "^2.14.2",
+    "express": "^5.2.1",
+    "highlight.js": "^11.11.1",
+    "lodash": "^4.18.1",
+    "nprogress": "^0.2.0",
+    "vue": "^3.5.34"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.6",
+    "sass": "^1.101.0",
+    "vite": "^8.0.12"
+  }
+}

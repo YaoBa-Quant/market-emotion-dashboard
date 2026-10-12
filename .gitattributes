@@ -1,0 +1,20 @@
+# 统一换行符为 LF，避免在 Windows 上提交时整仓库被改写为 CRLF。
+* text=auto eol=lf
+
+# 二进制资源：禁止文本化处理，避免 Git 尝试合并/转换
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+
+# 本地数据库（运行期产物）
+*.db binary
+*.db-wal binary
+*.db-shm binary
+*.sqlite binary

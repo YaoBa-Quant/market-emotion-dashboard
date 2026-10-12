@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="12" y1="10" x2="52" y2="56" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#172033" />
+      <stop offset="1" stop-color="#243858" />
+    </linearGradient>
+    <linearGradient id="hot" x1="15" y1="38" x2="49" y2="18" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#24b36b" />
+      <stop offset="0.52" stop-color="#f7c94a" />
+      <stop offset="1" stop-color="#ef5a5a" />
+    </linearGradient>
+    <linearGradient id="bars" x1="22" y1="44" x2="42" y2="27" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#7ac7ff" />
+      <stop offset="1" stop-color="#c4e3ff" />
+    </linearGradient>
+    <filter id="shadow" x="6" y="6" width="52" height="52" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#0a1220" flood-opacity="0.35" />
+    </filter>
+  </defs>
+
+  <g filter="url(#shadow)">
+    <rect x="10" y="10" width="44" height="44" rx="14" fill="url(#bg)" />
+  </g>
+
+  <circle cx="32" cy="32" r="15.5" stroke="#d8e5f6" stroke-opacity="0.18" stroke-width="5" />
+  <path
+    d="M18.6 39.2A17 17 0 0 1 47.8 24.1"
+    stroke="url(#hot)"
+    stroke-width="5"
+    stroke-linecap="round"
+  />
+
+  <path d="M23 41.5 28.4 36.8 32.4 33.1" stroke="#d3e7ff" stroke-opacity="0.7" stroke-width="2.4" stroke-linecap="round" />
+  <path d="M32 32 43.6 24.6" stroke="#f5f8ff" stroke-width="3.2" stroke-linecap="round" />
+  <circle cx="32" cy="32" r="3.6" fill="#f5f8ff" />
+  <circle cx="32" cy="32" r="1.7" fill="#243858" />
+
+  <rect x="22" y="41" width="3.8" height="5.5" rx="1.3" fill="url(#bars)" />
+  <rect x="28.2" y="38" width="3.8" height="8.5" rx="1.3" fill="url(#bars)" />
+  <rect x="34.4" y="34.5" width="3.8" height="12" rx="1.3" fill="url(#bars)" />
+  <rect x="40.6" y="29.5" width="3.8" height="17" rx="1.3" fill="url(#bars)" />
+
+  <circle cx="22.5" cy="23.5" r="1.3" fill="#24b36b" />
+  <circle cx="42.2" cy="18.8" r="1.3" fill="#ef5a5a" />
+</svg>
